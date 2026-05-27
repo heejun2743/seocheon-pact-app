@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>서천결의</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);color:#0f172a}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .app{display:grid;grid-template-columns:330px 1fr;gap:16px}
+    .card{background:white;border-radius:28px;box-shadow:0 10px 30px rgba(15,23,42,.08);overflow:hidden}
+    .hero{background:#0f172a;color:white;padding:24px}
+    .hero small{color:#bfdbfe}
+    .hero h1{font-size:34px;margin:6px 0 18px}
+    .members{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .member{background:rgba(255,255,255,.1);border-radius:18px;padding:10px;text-align:center;font-size:12px}
+    .avatar{width:44px;height:44px;border-radius:16px;background:#1d4ed8;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-weight:800;color:white}
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+    button{border:0;border-radius:18px;padding:12px 14px;font-weight:800;cursor:pointer;background:#e2e8f0;color:#0f172a}
+    button.active,button.primary{background:#0f172a;color:white}
+    .sideBox{padding:16px}
+    .status{background:#f1f5f9;border-radius:18px;padding:14px;font-size:14px;color:#475569;margin:10px 0}
+    .main{min-height:720px}
+    .chatLayout{display:grid;grid-template-columns:300px 1fr;min-height:720px}
+    .rooms{background:#f8fafc;padding:16px;border-right:1px solid #e2e8f0}
+    .room{background:white;border-radius:22px;padding:16px;margin-bottom:10px;cursor:pointer}
+    .room.sel{background:#0f172a;color:white}
+    .room p{margin:5px 0 0;font-size:13px;color:#64748b}
+    .room.sel p{color:#cbd5e1}
+    .chat{display:flex;flex-direction:column;min-height:720px}
+    .chatHeader{padding:18px;border-bottom:1px solid #e2e8f0}
+    .chatHeader h2{margin:0;font-size:22px}
+    .messages{flex:1;padding:18px;background:linear-gradient(#fff,#f8fafc);overflow:auto}
+    .msg{display:flex;gap:10px;margin:10px 0;align-items:flex-end}
+    .msg.me{justify-content:flex-end}
+    .bubble{max-width:70%;border-radius:24px;padding:12px 15px;background:white;box-shadow:0 3px 15px rgba(15,23,42,.06)}
+    .me .bubble{background:#2563eb;color:white}
+    .name{font-size:12px;color:#64748b;font-weight:800;margin-bottom:3px}
+    .time{font-size:11px;color:#94a3b8;text-align:right;margin-top:4px}
+    .composer{display:flex;gap:8px;padding:14px;border-top:1px solid #e2e8f0}
+    input{flex:1;border:1px solid #cbd5e1;border-radius:18px;padding:12px;font-size:15px}
+    .album,.home{padding:24px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .albumCard{background:#f1f5f9;border-radius:24px;overflow:hidden}
+    .thumb{height:150px;background:linear-gradient(135deg,#cbd5e1,#dbeafe);display:flex;align-items:center;justify-content:center;font-size:48px}
+    .albumCard div:last-child{padding:16px}
+    .homeHero{background:#0f172a;color:white;border-radius:28px;padding:30px}
+    .install{margin-top:12px;width:100%}
+    @media(max-width:820px){
+      .app{grid-template-columns:1fr}
+      .chatLayout{grid-template-columns:1fr}
+      .rooms{border-right:0;border-bottom:1px solid #e2e8f0}
+      .grid{grid-template-columns:1fr}
+      .main{min-height:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <aside>
+        <section class="card">
+          <div class="hero">
+            <small>4인 전용 커뮤니티 앱</small>
+            <h1>서천결의</h1>
+            <div class="members" id="members"></div>
+          </div>
+          <div class="tabs">
+            <button id="tabChat" class="active" onclick="showTab('chat')">채팅</button>
+            <button id="tabAlbum" onclick="showTab('album')">사진첩</button>
+            <button id="tabHome" onclick="showTab('home')">홈</button>
+          </div>
+        </section>
+
+        <section class="card sideBox" style="margin-top:16px">
+          <h3>앱 아이콘</h3>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:64px;height:64px;border-radius:22px;background:#0f172a;color:white;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900">西</div>
+            <div><b>서천결의</b><br><span style="color:#64748b;font-size:14px">홈 화면 아이콘</span></div>
+          </div>
+          <button class="primary install" onclick="installGuide()">홈 화면에 추가 안내</button>
+        </section>
+
+        <section class="card sideBox" style="margin-top:16px">
+          <h3>테스트 패널</h3>
+          <div class="status" id="notice">테스트 준비 완료</div>
+          <button class="primary install" onclick="askNotice()">알림 권한 요청</button>
+          <button class="install" onclick="friendMsg()">친구 메시지 수신 테스트</button>
+        </section>
+      </aside>
+
+      <main class="card main">
+        <section id="chatView" class="chatLayout">
+          <div class="rooms">
+            <div class="room sel" onclick="selectRoom('main')" id="roomMain">
+              <b>서천결의 단체방</b>
+              <p>4인 전용 메인 대화방</p>
+            </div>
+            <div class="room" onclick="selectRoom('notice')" id="roomNotice">
+              <b>공지방</b>
+              <p>약속·모임·회비 공지</p>
+            </div>
+          </div>
+          <div class="chat">
+            <div class="chatHeader">
+              <h2 id="roomTitle">서천결의 단체방</h2>
+              <p style="margin:4px 0 0;color:#64748b">참여자 4명 · 카톡형 단체 채팅</p>
+            </div>
+            <div class="messages" id="messages"></div>
+            <div class="composer">
+              <input id="msgInput" placeholder="메시지를 입력하세요" onkeydown="if(event.key==='Enter')sendMsg()">
+              <button class="primary" onclick="sendMsg()">전송</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="albumView" class="album" style="display:none">
+          <h2>서천결의 사진첩</h2>
+          <p style="color:#64748b">밴드형 사진·영상 저장 공간 프로토타입</p>
+          <button class="primary" onclick="addAlbum()">사진/영상 카드 추가</button>
+          <div class="grid" id="albums" style="margin-top:18px"></div>
+        </section>
+
+        <section id="homeView" class="home" style="display:none">
+          <div class="homeHero">
+            <small>홈페이지 + 밴드 + 카톡 통합형</small>
+            <h2 style="font-size:38px;margin:8px 0">서천결의</h2>
+            <p>4명의 친구가 채팅, 프로필, 사진첩, 영상, 공지, 모임 기록을 한 화면에서 관리하는 전용 커뮤니티 앱입니다.</p>
+          </div>
+          <div class="grid" style="margin-top:18px">
+            <div class="status"><b>카톡형 채팅</b><br>직관적인 대화방과 메시지</div>
+            <div class="status"><b>밴드형 사진첩</b><br>사진·영상 앨범 구조</div>
+            <div class="status"><b>PWA 설치</b><br>휴대폰 홈 화면 아이콘</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+<script>
+const members=[
+  ["정","희준"],["友1","친구 1"],["友2","친구 2"],["友3","친구 3"]
+];
+const messages={
+  main:[
+    {who:"친구 1",text:"서천결의 앱 테스트 시작!",me:false},
+    {who:"친구 2",text:"사진첩도 같이 쓰면 좋겠다.",me:false},
+    {who:"희준",text:"좋아. 채팅, 사진첩, 공지까지 하나로 만들자.",me:true}
+  ],
+  notice:[
+    {who:"희준",text:"다음 모임 날짜를 정해봅시다.",me:true}
+  ]
+};
+let room="main";
+let albumCount=3;
+
+function renderMembers(){
+  document.getElementById("members").innerHTML=members.map(m=>`
+    <div class="member"><div class="avatar">${m[0]}</div>${m[1]}</div>
+  `).join("");
+}
+function renderMessages(){
+  const box=document.getElementById("messages");
+  box.innerHTML=messages[room].map(m=>`
+    <div class="msg ${m.me?'me':''}">
+      ${m.me?'':`<div class="avatar">${m.who==='친구 1'?'友1':m.who==='친구 2'?'友2':'友3'}</div>`}
+      <div class="bubble">
+        ${m.me?'':`<div class="name">${m.who}</div>`}
+        <div>${m.text}</div>
+        <div class="time">${new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>
+  `).join("");
+  box.scrollTop=box.scrollHeight;
+}
+function selectRoom(id){
+  room=id;
+  document.getElementById("roomMain").classList.toggle("sel",id==="main");
+  document.getElementById("roomNotice").classList.toggle("sel",id==="notice");
+  document.getElementById("roomTitle").textContent=id==="main"?"서천결의 단체방":"공지방";
+  renderMessages();
+}
+function sendMsg(){
+  const input=document.getElementById("msgInput");
+  const text=input.value.trim();
+  if(!text)return;
+  messages[room].push({who:"희준",text,me:true});
+  input.value="";
+  setNotice("메시지 전송 테스트 성공");
+  renderMessages();
+}
+function friendMsg(){
+  const samples=["확인했다!","사진 올려줘.","이번 주 모임 가능?","좋다. 계속 만들어보자."];
+  const names=["친구 1","친구 2","친구 3"];
+  const who=names[Math.floor(Math.random()*names.length)];
+  const text=samples[Math.floor(Math.random()*samples.length)];
+  messages[room].push({who,text,me:false});
+  setNotice(who+"의 새 메시지 수신");
+  if(Notification.permission==="granted") new Notification("서천결의 - "+who,{body:text});
+  renderMessages();
+}
+function renderAlbums(){
+  const arr=[
+    ["📷","첫 모임 사진","희준"],
+    ["▶️","라운딩 영상","친구 2"],
+    ["📷","추억 앨범","친구 3"]
+  ];
+  document.getElementById("albums").innerHTML=arr.concat(
+    Array.from({length:Math.max(0,albumCount-3)},(_,i)=>["📷","새 추억 "+(i+4),"희준"])
+  ).map(a=>`
+    <div class="albumCard"><div class="thumb">${a[0]}</div><div><b>${a[1]}</b><br><span style="color:#64748b">${a[2]} · 2026.05.27</span><p>사진첩 카드 예시입니다.</p></div></div>
+  `).join("");
+}
+function addAlbum(){albumCount++;renderAlbums();setNotice("사진첩 카드 추가 성공")}
+function showTab(t){
+  ["chat","album","home"].forEach(x=>{
+    document.getElementById(x+"View").style.display=x===t?(x==="chat"?"grid":"block"):"none";
+    document.getElementById("tab"+x[0].toUpperCase()+x.slice(1)).classList.toggle("active",x===t);
+  });
+}
+function setNotice(t){document.getElementById("notice").textContent=t}
+async function askNotice(){
+  if(!("Notification" in window)){setNotice("이 브라우저는 알림을 지원하지 않습니다.");return}
+  const r=await Notification.requestPermission();
+  setNotice(r==="granted"?"알림 권한 허용됨":"알림 권한이 허용되지 않았습니다.");
+}
+function installGuide(){
+  alert("갤럭시 크롬 기준: 오른쪽 위 ⋮ 메뉴 → 홈 화면에 추가 → 추가를 누르면 됩니다.");
+}
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js"));
+}
+renderMembers();renderMessages();renderAlbums();
+</script>
+</body>
+</html>
